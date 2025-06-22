@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useCallback } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { BarChart3, Activity, TrendingUp, Grid3X3, Eye, Download, Edit3 } from 'lucide-react';
@@ -24,9 +26,9 @@ const AVAILABLE_FIELDS = [
 ];
 
 export default function SimpleStableApp() {
-  const [selectedFields, setSelectedFields] = useState(['temp', 'humidity']); // デフォルトで2つ選択
+  const [selectedFields, setSelectedFields] = useState(['temp', 'humidity']);
   const [chartType, setChartType] = useState('bar');
-  const [showPreview, setShowPreview] = useState(true); // デフォルトで表示
+  const [showPreview, setShowPreview] = useState(true);
   const [memo, setMemo] = useState('');
   const [projectName, setProjectName] = useState('製造ライン_データ分析');
 
@@ -113,7 +115,6 @@ export default function SimpleStableApp() {
         );
 
       case 'pie':
-        // 円グラフは最初の数値項目を使用
         const pieField = numericFields[0];
         if (!pieField) {
           return <div className="text-center py-8 text-gray-500">円グラフには数値項目が必要です</div>;
@@ -196,7 +197,6 @@ export default function SimpleStableApp() {
 作成日時: ${new Date().toLocaleString('ja-JP')}
     `.trim();
 
-    // テキストファイルとしてダウンロード
     const blob = new Blob([exportText], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
