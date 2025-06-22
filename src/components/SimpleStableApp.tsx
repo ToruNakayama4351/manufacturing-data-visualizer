@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useState, useCallback } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { BarChart3, Activity, TrendingUp, Grid3X3, Eye, Download, Edit3 } from 'lucide-react';
@@ -26,9 +24,9 @@ const AVAILABLE_FIELDS = [
 ];
 
 export default function SimpleStableApp() {
-  const [selectedFields, setSelectedFields] = useState(['temp', 'humidity']);
+  const [selectedFields, setSelectedFields] = useState(['temp', 'humidity']); // デフォルトで2つ選択
   const [chartType, setChartType] = useState('bar');
-  const [showPreview, setShowPreview] = useState(true);
+  const [showPreview, setShowPreview] = useState(true); // デフォルトで表示
   const [memo, setMemo] = useState('');
   const [projectName, setProjectName] = useState('製造ライン_データ分析');
 
@@ -115,6 +113,7 @@ export default function SimpleStableApp() {
         );
 
       case 'pie':
+        // 円グラフは最初の数値項目を使用
         const pieField = numericFields[0];
         if (!pieField) {
           return <div className="text-center py-8 text-gray-500">円グラフには数値項目が必要です</div>;
@@ -197,6 +196,7 @@ export default function SimpleStableApp() {
 作成日時: ${new Date().toLocaleString('ja-JP')}
     `.trim();
 
+    // テキストファイルとしてダウンロード
     const blob = new Blob([exportText], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -220,32 +220,39 @@ export default function SimpleStableApp() {
         </header>
 
         {/* プロジェクト名 */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-3">プロジェクト名</h2>
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800">プロジェクト名</h2>
           <input
             type="text"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full p-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             placeholder="プロジェクト名を入力"
           />
         </div>
 
         {/* 項目選択 */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">📊 可視化する項目を選択</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800 flex items-center">
+            <span className="bg-blue-100 p-2 rounded-lg mr-3">📊</span>
+            可視化する項目を選択
+          </h2>
+          <div className="space-y-4 mb-8">
             {AVAILABLE_FIELDS.map(field => (
-              <label key={field.id} className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors">
+              <label key={field.id} className={`flex items-center space-x-4 p-6 border-2 rounded-xl cursor-pointer transition-all transform hover:scale-[1.02] ${
+                selectedFields.includes(field.id) 
+                  ? 'border-blue-500 bg-blue-50 shadow-md' 
+                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+              }`}>
                 <input
                   type="checkbox"
                   checked={selectedFields.includes(field.id)}
                   onChange={() => handleFieldToggle(field.id)}
-                  className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                  className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 focus:ring-2"
                 />
-                <div>
-                  <span className="font-medium text-gray-900">{field.name}</span>
-                  <span className="text-sm text-gray-500 ml-2">
+                <div className="flex-1">
+                  <span className="font-semibold text-lg text-gray-900">{field.name}</span>
+                  <span className="text-sm text-gray-500 ml-3">
                     {field.unit ? `(${field.unit})` : field.type === 'string' ? '(カテゴリ)' : ''}
                   </span>
                 </div>
@@ -254,8 +261,11 @@ export default function SimpleStableApp() {
           </div>
 
           {/* グラフタイプ選択 */}
-          <h3 className="text-lg font-semibold mb-3">📈 グラフタイプ</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+          <h3 className="text-2xl font-semibold mb-6 text-gray-800 flex items-center">
+            <span className="bg-green-100 p-2 rounded-lg mr-3">📈</span>
+            グラフタイプ
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {[
               { type: 'bar', icon: BarChart3, name: '棒グラフ' },
               { type: 'line', icon: Activity, name: '線グラフ' },
@@ -265,14 +275,14 @@ export default function SimpleStableApp() {
               <button
                 key={type}
                 onClick={() => handleChartTypeChange(type)}
-                className={`p-4 rounded-lg border-2 transition-all flex flex-col items-center ${
+                className={`p-6 rounded-xl border-2 transition-all flex flex-col items-center transform hover:scale-105 ${
                   chartType === type
-                    ? 'border-blue-500 bg-blue-50 text-blue-700'
-                    : 'border-gray-300 hover:border-gray-400'
+                    ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg'
+                    : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
                 }`}
               >
-                <Icon className="h-8 w-8 mb-2" />
-                <span className="text-sm font-medium">{name}</span>
+                <Icon className="h-10 w-10 mb-3" />
+                <span className="text-sm font-semibold">{name}</span>
               </button>
             ))}
           </div>
@@ -280,40 +290,40 @@ export default function SimpleStableApp() {
 
         {/* プレビューエリア */}
         {showPreview && (
-          <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold flex items-center">
-                <Eye className="mr-2" />
+          <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-semibold flex items-center text-gray-800">
+                <span className="bg-purple-100 p-2 rounded-lg mr-3">👁️</span>
                 リアルタイムプレビュー
               </h2>
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-lg">
                 選択項目: {selectedFields.length}個 | データ: {SAMPLE_DATA.length}行
               </div>
             </div>
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+            <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
               {renderChart()}
             </div>
           </div>
         )}
 
         {/* メモ・エクスポート */}
-        <div className="bg-white rounded-xl shadow-lg p-6">
-          <h2 className="text-xl font-semibold mb-4 flex items-center">
-            <Edit3 className="mr-2" />
+        <div className="bg-white rounded-xl shadow-lg p-8">
+          <h2 className="text-2xl font-semibold mb-6 flex items-center text-gray-800">
+            <span className="bg-orange-100 p-2 rounded-lg mr-3">📝</span>
             メモ・要望
           </h2>
           <textarea
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
-            className="w-full h-32 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full h-40 p-4 border-2 border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg"
             placeholder="お客様からの要望や気づいた点を記録..."
           />
-          <div className="mt-4 flex justify-end">
+          <div className="mt-6 flex justify-end">
             <button
               onClick={handleExport}
-              className="flex items-center space-x-2 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+              className="flex items-center space-x-3 bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-all transform hover:scale-105 shadow-lg text-lg font-semibold"
             >
-              <Download className="h-5 w-5" />
+              <Download className="h-6 w-6" />
               <span>レポートをエクスポート</span>
             </button>
           </div>
