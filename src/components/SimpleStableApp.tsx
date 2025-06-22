@@ -25,7 +25,7 @@ const AVAILABLE_FIELDS = [
   { id: 'date', name: '日付', type: 'string', key: '日付', unit: '' },
 ];
 
-export default function ProfessionalChartApp() {
+export default function SimpleStableApp() {
   const [selectedFields, setSelectedFields] = useState(['temp', 'humidity']);
   const [chartType, setChartType] = useState('bar');
   const [showPreview, setShowPreview] = useState(true);
