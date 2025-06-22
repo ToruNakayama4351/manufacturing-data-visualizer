@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { BarChart3, Activity, TrendingUp, Grid3X3, Eye, Download, Edit3 } from 'lucide-react';
+import { BarChart3, Activity, TrendingUp, Grid3X3, Eye, Download, Edit3, Zap } from 'lucide-react';
 
 // 🔧 固定のサンプルデータ（製造業向け）
 const SAMPLE_DATA = [
@@ -25,7 +25,7 @@ const AVAILABLE_FIELDS = [
   { id: 'date', name: '日付', type: 'string', key: '日付', unit: '' },
 ];
 
-export default function SimpleStableApp() {
+export default function ProfessionalChartApp() {
   const [selectedFields, setSelectedFields] = useState(['temp', 'humidity']);
   const [chartType, setChartType] = useState('bar');
   const [showPreview, setShowPreview] = useState(true);
@@ -56,29 +56,38 @@ export default function SimpleStableApp() {
   const renderChart = () => {
     if (selectedFields.length === 0) {
       return (
-        <div className="text-center py-12">
-          <BarChart3 className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-          <p className="text-gray-500">項目を選択してください</p>
+        <div className="text-center py-16">
+          <div className="bg-gradient-to-br from-gray-100 to-gray-200 w-32 h-32 rounded-full mx-auto mb-6 flex items-center justify-center">
+            <BarChart3 className="h-16 w-16 text-gray-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-600 mb-2">項目を選択してください</h3>
+          <p className="text-gray-500">上記のチェックボックスから可視化したい項目を選んでください</p>
         </div>
       );
     }
 
     const { data, fields } = getSelectedData();
-    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    const colors = ['#4F46E5', '#059669', '#DC2626', '#9333EA', '#EA580C'];
     
-    // X軸は常に日付
     const xAxisKey = '日付';
     const numericFields = fields.filter(f => f.type === 'number');
 
     switch (chartType) {
       case 'bar':
         return (
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey={xAxisKey} />
-              <YAxis />
-              <Tooltip />
+          <ResponsiveContainer width="100%" height={450}>
+            <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey={xAxisKey} tick={{ fontSize: 12 }} stroke="#6B7280" />
+              <YAxis tick={{ fontSize: 12 }} stroke="#6B7280" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'white', 
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '12px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                }}
+              />
               <Legend />
               {numericFields.map((field, index) => (
                 <Bar 
@@ -86,6 +95,7 @@ export default function SimpleStableApp() {
                   dataKey={field.key} 
                   fill={colors[index % colors.length]} 
                   name={`${field.name} (${field.unit})`}
+                  radius={[4, 4, 0, 0]}
                 />
               ))}
             </BarChart>
@@ -94,12 +104,19 @@ export default function SimpleStableApp() {
 
       case 'line':
         return (
-          <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={data}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey={xAxisKey} />
-              <YAxis />
-              <Tooltip />
+          <ResponsiveContainer width="100%" height={450}>
+            <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+              <XAxis dataKey={xAxisKey} tick={{ fontSize: 12 }} stroke="#6B7280" />
+              <YAxis tick={{ fontSize: 12 }} stroke="#6B7280" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'white', 
+                  border: '1px solid #E5E7EB',
+                  borderRadius: '12px',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                }}
+              />
               <Legend />
               {numericFields.map((field, index) => (
                 <Line 
@@ -107,6 +124,8 @@ export default function SimpleStableApp() {
                   type="monotone" 
                   dataKey={field.key} 
                   stroke={colors[index % colors.length]} 
+                  strokeWidth={3}
+                  dot={{ r: 6, fill: colors[index % colors.length] }}
                   name={`${field.name} (${field.unit})`}
                 />
               ))}
@@ -117,7 +136,14 @@ export default function SimpleStableApp() {
       case 'pie':
         const pieField = numericFields[0];
         if (!pieField) {
-          return <div className="text-center py-8 text-gray-500">円グラフには数値項目が必要です</div>;
+          return (
+            <div className="text-center py-16">
+              <div className="bg-gradient-to-br from-orange-100 to-red-100 w-32 h-32 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <TrendingUp className="h-16 w-16 text-orange-500" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-600">円グラフには数値項目が必要です</h3>
+            </div>
+          );
         }
         
         const pieData = data.map(item => ({
@@ -126,7 +152,7 @@ export default function SimpleStableApp() {
         }));
 
         return (
-          <ResponsiveContainer width="100%" height={400}>
+          <ResponsiveContainer width="100%" height={450}>
             <PieChart>
               <Pie
                 data={pieData}
@@ -134,7 +160,7 @@ export default function SimpleStableApp() {
                 cy="50%"
                 labelLine={false}
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                outerRadius={120}
+                outerRadius={140}
                 fill="#8884d8"
                 dataKey="value"
               >
@@ -150,23 +176,27 @@ export default function SimpleStableApp() {
       case 'table':
         return (
           <div className="overflow-x-auto">
-            <table className="min-w-full border-collapse border border-gray-300">
+            <table className="min-w-full">
               <thead>
-                <tr className="bg-gray-50">
-                  <th className="border border-gray-300 px-4 py-2 text-left">日付</th>
+                <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
+                  <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b border-gray-200">
+                    日付
+                  </th>
                   {numericFields.map(field => (
-                    <th key={field.id} className="border border-gray-300 px-4 py-2 text-left">
-                      {field.name} ({field.unit})
+                    <th key={field.id} className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b border-gray-200">
+                      {field.name} <span className="text-gray-500">({field.unit})</span>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-200">
                 {data.map((row, index) => (
                   <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="border border-gray-300 px-4 py-2">{row[xAxisKey]}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                      {row[xAxisKey]}
+                    </td>
                     {numericFields.map(field => (
-                      <td key={field.id} className="border border-gray-300 px-4 py-2">
+                      <td key={field.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {typeof row[field.key] === 'number' ? row[field.key].toFixed(1) : row[field.key]}
                       </td>
                     ))}
@@ -182,7 +212,7 @@ export default function SimpleStableApp() {
     }
   };
 
-  // 🔧 エクスポート機能（シンプル版）
+  // 🔧 エクスポート機能
   const handleExport = () => {
     const selectedFieldNames = AVAILABLE_FIELDS
       .filter(f => selectedFields.includes(f.id))
@@ -207,82 +237,103 @@ export default function SimpleStableApp() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* ヘッダー */}
-        <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">
+        <header className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl mb-6 shadow-lg">
+            <Zap className="h-10 w-10 text-white" />
+          </div>
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-4">
             製造業データ可視化ツール
           </h1>
-          <p className="text-gray-600">
-            シンプル・確実動作版 - サンプルデータで即座に体験
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            プロフェッショナルグレード・データ分析プラットフォーム
           </p>
         </header>
 
         {/* プロジェクト名 */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-semibold mb-6 text-gray-800">プロジェクト名</h2>
+        <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+            <div className="w-3 h-8 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full mr-4"></div>
+            プロジェクト名
+          </h2>
           <input
             type="text"
             value={projectName}
             onChange={(e) => setProjectName(e.target.value)}
-            className="w-full p-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            placeholder="プロジェクト名を入力"
+            className="w-full p-4 text-lg bg-white border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 shadow-sm"
+            placeholder="プロジェクト名を入力してください"
           />
         </div>
 
         {/* 項目選択 */}
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-          <h2 className="text-2xl font-semibold mb-6 text-gray-800 flex items-center">
-            <span className="bg-blue-100 p-2 rounded-lg mr-3">📊</span>
+        <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-8 flex items-center">
+            <div className="w-3 h-8 bg-gradient-to-b from-emerald-500 to-teal-600 rounded-full mr-4"></div>
             可視化する項目を選択
           </h2>
-          <div className="space-y-4 mb-8">
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-12">
             {AVAILABLE_FIELDS.map(field => (
-              <label key={field.id} className={`flex items-center space-x-4 p-6 border-2 rounded-xl cursor-pointer transition-all transform hover:scale-[1.02] ${
-                selectedFields.includes(field.id) 
-                  ? 'border-blue-500 bg-blue-50 shadow-md' 
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-              }`}>
+              <label 
+                key={field.id} 
+                className={`group relative flex items-center p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
+                  selectedFields.includes(field.id) 
+                    ? 'border-blue-500 bg-blue-50/50 shadow-lg shadow-blue-500/10' 
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
+                }`}
+              >
                 <input
                   type="checkbox"
                   checked={selectedFields.includes(field.id)}
                   onChange={() => handleFieldToggle(field.id)}
-                  className="w-5 h-5 text-blue-600 rounded focus:ring-blue-500 focus:ring-2"
+                  className="w-5 h-5 text-blue-600 border-2 border-gray-300 rounded-lg focus:ring-4 focus:ring-blue-500/20 transition-colors"
                 />
-                <div className="flex-1">
-                  <span className="font-semibold text-lg text-gray-900">{field.name}</span>
-                  <span className="text-sm text-gray-500 ml-3">
-                    {field.unit ? `(${field.unit})` : field.type === 'string' ? '(カテゴリ)' : ''}
-                  </span>
+                <div className="ml-4 flex-1">
+                  <div className="font-semibold text-lg text-gray-900">{field.name}</div>
+                  <div className="text-sm text-gray-500 mt-1">
+                    {field.unit ? `単位: ${field.unit}` : 'カテゴリデータ'}
+                  </div>
                 </div>
+                <div className={`w-4 h-4 rounded-full transition-opacity ${
+                  selectedFields.includes(field.id) ? 'bg-blue-500 opacity-100' : 'bg-gray-300 opacity-0'
+                }`}></div>
               </label>
             ))}
           </div>
 
           {/* グラフタイプ選択 */}
-          <h3 className="text-2xl font-semibold mb-6 text-gray-800 flex items-center">
-            <span className="bg-green-100 p-2 rounded-lg mr-3">📈</span>
+          <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+            <div className="w-3 h-8 bg-gradient-to-b from-purple-500 to-pink-600 rounded-full mr-4"></div>
             グラフタイプ
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { type: 'bar', icon: BarChart3, name: '棒グラフ' },
-              { type: 'line', icon: Activity, name: '線グラフ' },
-              { type: 'pie', icon: TrendingUp, name: '円グラフ' },
-              { type: 'table', icon: Grid3X3, name: '表' }
-            ].map(({ type, icon: Icon, name }) => (
+              { type: 'bar', icon: BarChart3, name: '棒グラフ', desc: '比較に最適' },
+              { type: 'line', icon: Activity, name: '線グラフ', desc: 'トレンド分析' },
+              { type: 'pie', icon: TrendingUp, name: '円グラフ', desc: '割合表示' },
+              { type: 'table', icon: Grid3X3, name: '表', desc: '詳細データ' }
+            ].map(({ type, icon: Icon, name, desc }) => (
               <button
                 key={type}
                 onClick={() => handleChartTypeChange(type)}
-                className={`p-6 rounded-xl border-2 transition-all flex flex-col items-center transform hover:scale-105 ${
+                className={`group p-6 rounded-2xl border-2 transition-all duration-200 ${
                   chartType === type
-                    ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-lg'
-                    : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                    ? 'border-blue-500 bg-blue-50/50 shadow-lg shadow-blue-500/10'
+                    : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-md'
                 }`}
               >
-                <Icon className="h-10 w-10 mb-3" />
-                <span className="text-sm font-semibold">{name}</span>
+                <Icon className={`h-12 w-12 mx-auto mb-4 transition-colors ${
+                  chartType === type ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'
+                }`} />
+                <div className={`font-semibold text-lg mb-1 transition-colors ${
+                  chartType === type ? 'text-blue-900' : 'text-gray-700'
+                }`}>
+                  {name}
+                </div>
+                <div className="text-sm text-gray-500">{desc}</div>
               </button>
             ))}
           </div>
@@ -290,40 +341,48 @@ export default function SimpleStableApp() {
 
         {/* プレビューエリア */}
         {showPreview && (
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold flex items-center text-gray-800">
-                <span className="bg-purple-100 p-2 rounded-lg mr-3">👁️</span>
+          <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8 mb-8">
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+                <div className="w-3 h-8 bg-gradient-to-b from-orange-500 to-red-600 rounded-full mr-4"></div>
                 リアルタイムプレビュー
               </h2>
-              <div className="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-lg">
-                選択項目: {selectedFields.length}個 | データ: {SAMPLE_DATA.length}行
+              <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <div className="bg-gray-100 px-4 py-2 rounded-xl">
+                  選択項目: {selectedFields.length}個
+                </div>
+                <div className="bg-gray-100 px-4 py-2 rounded-xl">
+                  データ: {SAMPLE_DATA.length}行
+                </div>
               </div>
             </div>
-            <div className="border-2 border-gray-200 rounded-xl p-6 bg-gray-50">
+            
+            <div className="bg-white rounded-2xl p-8 shadow-inner border border-gray-100">
               {renderChart()}
             </div>
           </div>
         )}
 
         {/* メモ・エクスポート */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <h2 className="text-2xl font-semibold mb-6 flex items-center text-gray-800">
-            <span className="bg-orange-100 p-2 rounded-lg mr-3">📝</span>
+        <div className="bg-white/70 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8">
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+            <div className="w-3 h-8 bg-gradient-to-b from-green-500 to-emerald-600 rounded-full mr-4"></div>
             メモ・要望
           </h2>
+          
           <textarea
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
-            className="w-full h-40 p-4 border-2 border-gray-300 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-lg"
-            placeholder="お客様からの要望や気づいた点を記録..."
+            className="w-full h-48 p-6 text-lg bg-white border-2 border-gray-200 rounded-2xl resize-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 shadow-sm"
+            placeholder="お客様からの要望や気づいた点を記録してください..."
           />
-          <div className="mt-6 flex justify-end">
+          
+          <div className="mt-8 flex justify-end">
             <button
               onClick={handleExport}
-              className="flex items-center space-x-3 bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition-all transform hover:scale-105 shadow-lg text-lg font-semibold"
+              className="group flex items-center space-x-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-lg"
             >
-              <Download className="h-6 w-6" />
+              <Download className="h-6 w-6 group-hover:animate-bounce" />
               <span>レポートをエクスポート</span>
             </button>
           </div>
