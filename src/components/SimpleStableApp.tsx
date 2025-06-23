@@ -33,7 +33,7 @@ export default function SimpleStableApp() {
   const [projectName, setProjectName] = useState('製造ライン_データ分析');
 
   // 🔧 項目選択の処理
-  const handleFieldToggle = useCallback((fieldId) => {
+  const handleFieldToggle = useCallback((fieldId: string) => {
     setSelectedFields(prev => 
       prev.includes(fieldId) 
         ? prev.filter(id => id !== fieldId)
@@ -42,7 +42,7 @@ export default function SimpleStableApp() {
   }, []);
 
   // 🔧 チャートタイプ変更
-  const handleChartTypeChange = useCallback((type) => {
+  const handleChartTypeChange = useCallback((type: string) => {
     setChartType(type);
   }, []);
 
@@ -80,7 +80,7 @@ export default function SimpleStableApp() {
       alignItems: 'center',
     },
     // アクセントバー
-    accentBar: (color) => ({
+    accentBar: (color: string) => ({
       width: '4px',
       height: '32px',
       background: `linear-gradient(to bottom, ${color}, ${color}dd)`,
@@ -88,7 +88,7 @@ export default function SimpleStableApp() {
       marginRight: '16px',
     }),
     // 項目カード
-    fieldCard: (isSelected) => ({
+    fieldCard: (isSelected: boolean) => ({
       display: 'flex',
       alignItems: 'center',
       padding: '20px',
@@ -101,7 +101,7 @@ export default function SimpleStableApp() {
       boxShadow: isSelected ? '0 8px 25px -8px rgba(59, 130, 246, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.1)',
     }),
     // ボタンスタイル
-    chartButton: (isActive) => ({
+    chartButton: (isActive: boolean) => ({
       padding: '20px',
       border: `2px solid ${isActive ? '#3b82f6' : '#e5e7eb'}`,
       borderRadius: '16px',
@@ -109,9 +109,9 @@ export default function SimpleStableApp() {
       cursor: 'pointer',
       transition: 'all 0.2s ease',
       display: 'flex',
-      flexDirection: 'column',
+      flexDirection: 'column' as const,
       alignItems: 'center',
-      textAlign: 'center',
+      textAlign: 'center' as const,
       boxShadow: isActive ? '0 8px 25px -8px rgba(59, 130, 246, 0.3)' : '0 2px 4px rgba(0, 0, 0, 0.1)',
     }),
     // インプットスタイル
@@ -135,7 +135,7 @@ export default function SimpleStableApp() {
       borderRadius: '16px',
       background: 'white',
       outline: 'none',
-      resize: 'none',
+      resize: 'none' as const,
       transition: 'all 0.2s ease',
     },
     // エクスポートボタン
@@ -455,18 +455,6 @@ export default function SimpleStableApp() {
               <label 
                 key={field.id} 
                 style={styles.fieldCard(selectedFields.includes(field.id))}
-                onMouseEnter={(e) => {
-                  if (!selectedFields.includes(field.id)) {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 8px 25px -8px rgba(0, 0, 0, 0.15)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!selectedFields.includes(field.id)) {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-                  }
-                }}
               >
                 <input
                   type="checkbox"
@@ -503,18 +491,6 @@ export default function SimpleStableApp() {
                 key={type}
                 onClick={() => handleChartTypeChange(type)}
                 style={styles.chartButton(chartType === type)}
-                onMouseEnter={(e) => {
-                  if (chartType !== type) {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = '0 8px 25px -8px rgba(0, 0, 0, 0.15)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (chartType !== type) {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)';
-                  }
-                }}
               >
                 <Icon style={{ 
                   width: '48px', 
@@ -596,14 +572,6 @@ export default function SimpleStableApp() {
             <button
               onClick={handleExport}
               style={styles.exportButton}
-              onMouseEnter={(e) => {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 12px 25px -8px rgba(59, 130, 246, 0.5)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.transform = 'translateY(0)';
-                e.target.style.boxShadow = '0 8px 25px -8px rgba(59, 130, 246, 0.4)';
-              }}
             >
               <Download style={{ width: '24px', height: '24px' }} />
               <span>レポートをエクスポート</span>
